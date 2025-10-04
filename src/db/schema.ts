@@ -60,4 +60,36 @@ export const verification = pgTable("verification", {
     .notNull(),
 });
 
-export const schema = { user, session, account, verification };
+export const task = pgTable("task", {
+  id: text("id").primaryKey().$default(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  completed: boolean("completed").default(false).notNull(),
+  dueDate: timestamp("due_date"),
+});
+
+export const groupTask = pgTable("group_task", {
+  id: text("id").primaryKey().$default(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  taskIds: text("task_ids").array().notNull().default([]),
+  color: text("color"),
+});
+
+export const schema = { user, session, account, verification, task, groupTask };
