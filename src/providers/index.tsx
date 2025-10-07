@@ -1,5 +1,7 @@
 "use client";
 import { ThemeProvider } from "./theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { ProgressProvider } from "@bprogress/next/app";
 
 export default function Providers({
 	children,
@@ -8,7 +10,15 @@ export default function Providers({
 }>) {
 	return (
 		<ThemeProvider attribute={"class"} defaultTheme="system" enableSystem>
-			{children}
+			<Toaster richColors closeButton />
+			<ProgressProvider
+				height="3px"
+				color="#facc15"
+				options={{ showSpinner: false }}
+				shallowRouting
+			>
+				{children}
+			</ProgressProvider>
 		</ThemeProvider>
 	);
 }

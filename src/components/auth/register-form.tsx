@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,47 +11,47 @@ import {
 import {
 	Field,
 	FieldDescription,
-	FieldGroup,
+	FieldGroup
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
-import type { LoginSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "@/schemas";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
-import { useTransition } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, type RegisterSchema } from "@/schemas";
 import {
 	Form,
+	FormMessage,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
+import { useTransition } from "react";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { signInGoogle } from "@/actions/auth";
+import { redirect } from "next/navigation";
 
-export function LoginForm({
+export function RegisterForm({
 	className,
 	...props
 }: React.ComponentProps<"div">) {
 	const [isPending, startTransition] = useTransition();
-	const router = useRouter();
-	const params = useSearchParams();
-	const loginform = useForm<LoginSchema>({
-		resolver: zodResolver(loginSchema),
+	const registerform = useForm<RegisterSchema>({
+		resolver: zodResolver(registerSchema),
 		defaultValues: {
+			name: "",
 			email: "",
 			password: "",
 		},
 	});
-	const onSubmit = async (data: LoginSchema) => {
+
+	const onSubmit = async (data: RegisterSchema) => {
 		startTransition(async () => {
-			await authClient.signIn.email(
+			await authClient.signUp.email(
 				{
+					name: data.name,
 					email: data.email,
 					password: data.password,
 				},
@@ -60,57 +60,82 @@ export function LoginForm({
 						toast.info("Patientez un instant ...");
 					},
 					onSuccess: async () => {
-						toast.success("Connexion réussie", {
-							description: "Vous êtes maintenant connecté.",
+						toast.success("Compte créé ", {
+							description:
+								"Votre compte a été créé. Vérifiez votre e-mail pour vérifier votre compte.",
 						});
-						toast.info("Redirection en cours ...");
-						const callbackUrl =
-							params.get("callbackUrl") || "/";
-						router.push(callbackUrl);
+                        redirect('/login')
 					},
-					onError: (error) => {
-						if (error.error.code === "INVALID_EMAIL_OR_PASSWORD") {
-							toast.error("Email ou mot de passe invalide", {
-								description: "Veuillez vérifier vos informations et réessayer.",
+					onError: (ctx) => {
+						if (ctx.error.status === 400) {
+							toast.error("Erreur de validation", {
+								description: "Vérifiez les informations saisies.",
 							});
-							return;
-						}
-
-						if (error.error.code === "USER_NOT_FOUND") {
-							toast.error("Utilisateur non trouvé", {
-								description: "Aucun compte n'est associé à cet e-mail.",
+						} else if (ctx.error.status === 409) {
+							toast.error("Compte existant", {
+								description: "Un compte avec cet e-mail existe déjà.",
 							});
-							return;
-						}
-
-						if (error.error.code === "TOO_MANY_REQUESTS") {
+						} else if (ctx.error.status === 429) {
 							toast.error("Trop de tentatives", {
-								description: "Veuillez réessayer plus tard",
+								description: "Veuillez réessayer plus tard.",
 							});
-							return;
+						} else {
+							toast.error("Erreur lors de la création", {
+								description: ctx.error.message || "Une erreur s'est produite. Veuillez réessayer.",
+							});
 						}
 					},
 				}
 			);
 		});
 	};
+
 	return (
-		<div className={cn("flex flex-col gap-6", className)} {...props}>
+		<div className={cn("flex flex-col gap-4", className)} {...props}>
 			<Card>
 				<CardHeader>
-					<CardTitle>Connectez-vous à votre compte</CardTitle>
+					<CardTitle>Créez votre compte</CardTitle>
 					<CardDescription>
-						Entrez votre e-mail ci-dessous pour vous connecter à
-						votre compte
+						Entrez votre e-mail ci-dessous pour créer un compte
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<Form {...loginform}>
-						<form onSubmit={loginform.handleSubmit(onSubmit)}>
+					<Form {...registerform}>
+						<form onSubmit={registerform.handleSubmit(onSubmit)}>
 							<FieldGroup className="gap-4">
 								<Field>
 									<FormField
-										control={loginform.control}
+										control={registerform.control}
+										name="name"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>
+													Nom & Prénom
+												</FormLabel>
+												<FormControl>
+													<Input
+														{...field}
+														disabled={isPending}
+														id="name"
+														type="text"
+														placeholder="Entrez votre nom complet"
+														required
+													/>
+												</FormControl>
+												<FormMessage>
+													{
+														registerform.formState
+															.errors.name
+															?.message
+													}
+												</FormMessage>
+											</FormItem>
+										)}
+									/>
+								</Field>
+								<Field>
+									<FormField
+										control={registerform.control}
 										name="email"
 										render={({ field }) => (
 											<FormItem>
@@ -127,7 +152,7 @@ export function LoginForm({
 												</FormControl>
 												<FormMessage>
 													{
-														loginform.formState
+														registerform.formState
 															.errors.email
 															?.message
 													}
@@ -138,7 +163,7 @@ export function LoginForm({
 								</Field>
 								<Field>
 									<FormField
-										control={loginform.control}
+										control={registerform.control}
 										name="password"
 										render={({ field }) => (
 											<FormItem>
@@ -149,54 +174,35 @@ export function LoginForm({
 														disabled={isPending}
 														id="password"
 														type="password"
-														placeholder="Entrez votre mot de passe"
+														placeholder="********"
 														required
 													/>
 												</FormControl>
 												<FormMessage>
 													{
-														loginform.formState
+														registerform.formState
 															.errors.password
 															?.message
 													}
 												</FormMessage>
-												<FormDescription className="flex items-center justify-end">
-													<Link
-														href="/forgot-password"
-														className="text-sm underline-offset-4 hover:underline"
-													>
-														Mot de passe oublié ?
-													</Link>
-												</FormDescription>
 											</FormItem>
 										)}
 									/>
 								</Field>
 								<Field>
-									<Button
-										disabled={
-											isPending ||
-											loginform.formState.isSubmitting
-										}
-										type="submit"
-										className="w-full"
-									>
-										Se connecter
-									</Button>
+									<Button type="submit" disabled={isPending || registerform.formState.isSubmitting}>S'inscrire</Button>
 									<div className="flex items-center gap-2 relative py-1">
 										<Separator orientation="horizontal" />
 										<span className="text-sm text-muted-foreground absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-card p-1">
 											ou
 										</span>
 									</div>
-									<Button variant="outline" type="button">
+									<Button variant="outline" type="button" onClick={signInGoogle} disabled={isPending}>
 										Se connecter avec Google
 									</Button>
 									<FieldDescription className="text-center">
-										Vous n&apos;avez pas de compte?{" "}
-										<Link href="/register">
-											S&apos;inscrire
-										</Link>
+										Vous avez déjà un compte?{" "}
+										<Link href="/login">Se connecter</Link>
 									</FieldDescription>
 								</Field>
 							</FieldGroup>
