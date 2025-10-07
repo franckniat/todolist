@@ -2,7 +2,6 @@
 
 import type { Task } from "@/types";
 import { Checkbox } from "../ui/checkbox";
-import { useLocalStorage } from "usehooks-ts";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Grip, PenLine, Trash } from "lucide-react";
@@ -11,7 +10,6 @@ import { format } from "date-fns";
 import { Button } from "../ui/button";
 
 export default function TodoItem({ task }: { task: Task }) {
-	const [storedTasks, setStoredTasks] = useLocalStorage<Task[]>("tasks", []);
 
 	const {
 		attributes,
@@ -47,12 +45,8 @@ export default function TodoItem({ task }: { task: Task }) {
 						className="w-5 h-5 cursor-pointer"
 						checked={task.completed}
 						onCheckedChange={(checked) => {
-							const updatedTasks = storedTasks.map((t) =>
-								t.id === task.id
-									? { ...t, completed: checked as boolean }
-									: t
-							);
-							setStoredTasks(updatedTasks);
+							// Update task completion status
+							console.log(checked);
 						}}
 					/>
 					<span
@@ -78,8 +72,7 @@ export default function TodoItem({ task }: { task: Task }) {
 							<PenLine />
 						</Button>
 						<Button variant={"destructive"} size={"icon-sm"} onClick={() => {
-							const updatedTasks = storedTasks.filter((t) => t.id !== task.id);
-							setStoredTasks(updatedTasks);
+							// TODO: delete task
 						}}>
 							<Trash size={16} />
 						</Button>
