@@ -189,9 +189,6 @@ export function LoginForm({
 											ou
 										</span>
 									</div>
-									<Button variant="outline" type="button">
-										Se connecter avec Google
-									</Button>
 									<FieldDescription className="text-center">
 										Vous n&apos;avez pas de compte?{" "}
 										<Link href="/register">
