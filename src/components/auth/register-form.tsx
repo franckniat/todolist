@@ -30,7 +30,6 @@ import {
 import { useTransition } from "react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { signInGoogle } from "@/actions/auth";
 import { redirect } from "next/navigation";
 
 export function RegisterForm({
@@ -197,9 +196,6 @@ export function RegisterForm({
 											ou
 										</span>
 									</div>
-									<Button variant="outline" type="button" onClick={signInGoogle} disabled={isPending}>
-										Se connecter avec Google
-									</Button>
 									<FieldDescription className="text-center">
 										Vous avez déjà un compte?{" "}
 										<Link href="/login">Se connecter</Link>
