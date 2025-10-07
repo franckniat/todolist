@@ -9,24 +9,24 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import type { Task } from "@/types";
-import { useLocalStorage } from "usehooks-ts";
 import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupButton,
 	InputGroupInput,
 } from "../ui/input-group";
+import { useSession } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 export default function TodoForm() {
 	const [newTask, setNewTask] = useState<Task>();
-	const [storedTasks, setStoredTasks] = useLocalStorage<Task[]>("tasks", []);
+	const { data: session } = useSession();
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (newTask) {
-			setStoredTasks([...storedTasks, newTask]);
+		if (!session) {
+			toast.error("Vous devez être connecté pour ajouter une tâche.");
+			return;
 		}
-		setNewTask(undefined);
-		console.log(newTask);
 	};
 	return (
 		<form onSubmit={handleSubmit}>
@@ -40,7 +40,6 @@ export default function TodoForm() {
 						onChange={(e) =>
 							setNewTask({
 								...newTask,
-								id: crypto.randomUUID(),
 								title: e.target.value,
 								completed: false,
 								createdAt: new Date(),

@@ -1,7 +1,6 @@
 "use client";
 
 import type { Task } from "@/types";
-import { useLocalStorage } from "usehooks-ts";
 import TodoItem from "./todo-item";
 import {
 	DndContext,
@@ -10,10 +9,10 @@ import {
 	PointerSensor,
 	useSensor,
 	useSensors,
-	type DragEndEvent,
+	//type DragEndEvent,
 } from "@dnd-kit/core";
 import {
-	arrayMove,
+	//arrayMove,
 	SortableContext,
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
@@ -25,37 +24,35 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export default function TodoList() {
-	const [storedTasks, setStoredTasks] = useLocalStorage<Task[]>("tasks", []);
+export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
 
-	const activeTasks = storedTasks.filter((task) => !task.completed);
-	const completedTasks = storedTasks.filter((task) => task.completed);
+	const activeTasks = tasks.filter((task) => !task.completed);
+	const completedTasks = tasks.filter((task) => task.completed);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
-		}),
+		})
 	);
 
-	function handleDragEnd(event: DragEndEvent) {
+	/* function handleDragEnd(event: DragEndEvent) {
 		const { active, over } = event;
 
 		if (over && active.id !== over.id) {
-			const oldIndex = storedTasks.findIndex((task) => task.id === active.id);
-			const newIndex = storedTasks.findIndex((task) => task.id === over.id);
+			const oldIndex = tasks.findIndex((task) => task.id === active.id);
+			const newIndex = tasks.findIndex((task) => task.id === over.id);
 
-			const reorderedTasks = arrayMove(storedTasks, oldIndex, newIndex);
-			setStoredTasks(reorderedTasks);
+			const reorderedTasks = arrayMove(tasks, oldIndex, newIndex);
 		}
-	}
+	} */
 
 	return (
 		<div className="space-y-4">
 			<DndContext
 				sensors={sensors}
 				collisionDetection={closestCenter}
-				onDragEnd={handleDragEnd}
+				//onDragEnd={handleDragEnd}
 			>
 				{activeTasks.length > 0 && (
 					<SortableContext
@@ -78,12 +75,17 @@ export default function TodoList() {
 							</AccordionTrigger>
 							<AccordionContent>
 								<SortableContext
-									items={completedTasks.map((task) => task.id)}
+									items={completedTasks.map(
+										(task) => task.id
+									)}
 									strategy={verticalListSortingStrategy}
 								>
 									<div className="flex flex-col gap-2 pt-2">
 										{completedTasks.map((task) => (
-											<TodoItem key={task.id} task={task} />
+											<TodoItem
+												key={task.id}
+												task={task}
+											/>
 										))}
 									</div>
 								</SortableContext>
@@ -94,9 +96,10 @@ export default function TodoList() {
 			</DndContext>
 
 			{/* Message si aucune tâche */}
-			{storedTasks.length === 0 && (
+			{tasks.length === 0 && (
 				<p className="text-sm text-muted-foreground text-center">
-					Aucune tâche pour le moment. Ajoutez une tâche pour commencer !
+					Aucune tâche pour le moment. Ajoutez une tâche pour
+					commencer !
 				</p>
 			)}
 		</div>
