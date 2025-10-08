@@ -9,7 +9,12 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { deleteTask, toggleTask, editTask } from "@/actions/task";
+import {
+	deleteTask,
+	editTask,
+	restoreTask,
+	toggleTask,
+} from "@/actions/task";
 import { toast } from "sonner";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -126,6 +131,7 @@ export default function TodoItem({ task }: { task: Task }) {
 					<Checkbox
 						className="w-5 h-5 cursor-pointer"
 						checked={task.completed}
+						id={`task-${task.id}`}
 						disabled={isEditing}
 						onCheckedChange={() => {
 							toggleTask(task.id).then(() => {
@@ -142,7 +148,7 @@ export default function TodoItem({ task }: { task: Task }) {
 							});
 						}}
 					/>
-					
+
 					{isEditing ? (
 						<div className="flex items-center gap-2 flex-1">
 							<Input
@@ -205,16 +211,24 @@ export default function TodoItem({ task }: { task: Task }) {
 							{format(task.dueDate, "dd/MM/yyyy")}
 						</span>
 					)}
-					<div className={cn(
-						"flex items-center gap-1 transition-opacity",
-						isEditing ? "opacity-0 pointer-events-none" : "group-hover:opacity-100 opacity-0"
-					)}>
+					<div
+						className={cn(
+							"flex items-center gap-1 transition-opacity",
+							isEditing
+								? "opacity-0 pointer-events-none"
+								: "group-hover:opacity-100 opacity-0"
+						)}
+					>
 						<EditTaskForm
 							isOpen={isOpen}
 							onOpenChange={setIsOpen}
 							task={task}
 						/>
-						<Button variant={"outline"} size={"icon-sm"} onClick={() => setIsOpen(true)}>
+						<Button
+							variant={"outline"}
+							size={"icon-sm"}
+							onClick={() => setIsOpen(true)}
+						>
 							<PenLine />
 						</Button>
 						<AlertDialog>
@@ -248,6 +262,14 @@ export default function TodoItem({ task }: { task: Task }) {
 													{
 														description:
 															"La tâche a été supprimée avec succès.",
+														action: {
+															label: "Annuler",
+															onClick: () => {
+																restoreTask(
+																	task.id
+																);
+															},
+														},
 													}
 												);
 											});

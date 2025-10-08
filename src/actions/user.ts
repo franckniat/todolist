@@ -1,17 +1,23 @@
 "use server";
 
-import { db } from "@/db/drizzle";
-import { user } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import prisma from "@/lib/db";
+
+export const getUserById = async (userId: string) => {
+    return await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+    });
+};
 
 export const getUserByEmail = async (email: string) => {
-    return await db.select().from(user).where(eq(user.email, email)).limit(1).then(res => res[0]);
-}
+    return await prisma.user.findUnique({
+        where: {
+            email,
+        },
+    });
+};
 
 export const getAllUsers = async () => {
-    return await db.select().from(user);
-}
-
-export const getUserById = async (id: string) => {
-    return await db.select().from(user).where(eq(user.id, id));
-}
+    return await prisma.user.findMany();
+};
