@@ -1,19 +1,14 @@
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { openAPI } from "better-auth/plugins"
-import { db } from "../db/drizzle";
-import { schema } from "@/db/schema";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { openAPI } from "better-auth/plugins";
 import { sendResetPasswordEMail, sendVerificationEMail } from "./mail";
+import prisma from "./db";
 
 export const auth = betterAuth({
     appName: "todolist",
-    database: drizzleAdapter(db, {
-        provider: "pg",
-        schema: {
-            ...schema,
-            user: schema.user,
-        }
+    database: prismaAdapter(prisma, {
+        provider: "postgresql"
     }),
     emailAndPassword: {
         enabled: true,
