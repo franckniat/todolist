@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/accordion";
 
 export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
-
 	const activeTasks = tasks.filter((task) => !task.completed);
 	const completedTasks = tasks.filter((task) => task.completed);
 
@@ -33,7 +32,7 @@ export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
 			coordinateGetter: sortableKeyboardCoordinates,
-		})
+		}),
 	);
 
 	/* function handleDragEnd(event: DragEndEvent) {
@@ -76,7 +75,7 @@ export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
 							<AccordionContent>
 								<SortableContext
 									items={completedTasks.map(
-										(task) => task.id
+										(task) => task.id,
 									)}
 									strategy={verticalListSortingStrategy}
 								>

@@ -8,11 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Field,
-	FieldDescription,
-	FieldGroup
-} from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
@@ -63,16 +59,18 @@ export function RegisterForm({
 							description:
 								"Votre compte a été créé. Vérifiez votre e-mail pour vérifier votre compte.",
 						});
-                        redirect('/login')
+						redirect("/login");
 					},
 					onError: (ctx) => {
 						if (ctx.error.status === 400) {
 							toast.error("Erreur de validation", {
-								description: "Vérifiez les informations saisies.",
+								description:
+									"Vérifiez les informations saisies.",
 							});
 						} else if (ctx.error.status === 409) {
 							toast.error("Compte existant", {
-								description: "Un compte avec cet e-mail existe déjà.",
+								description:
+									"Un compte avec cet e-mail existe déjà.",
 							});
 						} else if (ctx.error.status === 429) {
 							toast.error("Trop de tentatives", {
@@ -80,11 +78,13 @@ export function RegisterForm({
 							});
 						} else {
 							toast.error("Erreur lors de la création", {
-								description: ctx.error.message || "Une erreur s'est produite. Veuillez réessayer.",
+								description:
+									ctx.error.message ||
+									"Une erreur s'est produite. Veuillez réessayer.",
 							});
 						}
 					},
-				}
+				},
 			);
 		});
 	};
@@ -166,7 +166,9 @@ export function RegisterForm({
 										name="password"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Mot de passe</FormLabel>
+												<FormLabel>
+													Mot de passe
+												</FormLabel>
 												<FormControl>
 													<Input
 														{...field}
@@ -189,7 +191,15 @@ export function RegisterForm({
 									/>
 								</Field>
 								<Field>
-									<Button type="submit" disabled={isPending || registerform.formState.isSubmitting}>S'inscrire</Button>
+									<Button
+										type="submit"
+										disabled={
+											isPending ||
+											registerform.formState.isSubmitting
+										}
+									>
+										S'inscrire
+									</Button>
 									<div className="flex items-center gap-2 relative py-1">
 										<Separator orientation="horizontal" />
 										<span className="text-sm text-muted-foreground absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-card p-1">
