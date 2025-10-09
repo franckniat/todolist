@@ -1,1 +1,1 @@
-export type { Task } from "@todolist/prisma-client";
+export type { Task } from "@/generated/client";
