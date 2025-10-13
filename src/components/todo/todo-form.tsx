@@ -45,7 +45,7 @@ export default function TodoForm() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		
+
 		if (!session) {
 			toast.error("Vous devez être connecté pour ajouter une tâche.");
 			router.push("/login");
@@ -73,7 +73,11 @@ export default function TodoForm() {
 					inputRef.current?.focus();
 				}
 			} catch (error) {
-				toast.error(error instanceof Error ? error.message : "Une erreur est survenue");
+				toast.error(
+					error instanceof Error
+						? error.message
+						: "Une erreur est survenue",
+				);
 			}
 		});
 	};
@@ -109,9 +113,11 @@ export default function TodoForm() {
 									<InputGroupButton
 										type="button"
 										variant="outline"
-										onClick={() => setShowDescription(!showDescription)}
+										onClick={() =>
+											setShowDescription(!showDescription)
+										}
 										className={cn(
-											showDescription && "bg-muted"
+											showDescription && "bg-muted",
 										)}
 										disabled={isPending}
 									>
@@ -119,13 +125,16 @@ export default function TodoForm() {
 									</InputGroupButton>
 
 									{/* Bouton Calendrier */}
-									<Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+									<Popover
+										open={isCalendarOpen}
+										onOpenChange={setIsCalendarOpen}
+									>
 										<PopoverTrigger asChild>
 											<InputGroupButton
 												type="button"
 												variant="outline"
 												className={cn(
-													dueDate && "bg-muted"
+													dueDate && "bg-muted",
 												)}
 												disabled={isPending}
 											>
@@ -143,7 +152,9 @@ export default function TodoForm() {
 													setDueDate(date);
 													setIsCalendarOpen(false);
 												}}
-												disabled={(date) => date < new Date()}
+												disabled={(date) =>
+													date < new Date()
+												}
 												captionLayout="dropdown"
 												locale={fr}
 											/>
@@ -159,7 +170,9 @@ export default function TodoForm() {
 								disabled={!title.trim() || isPending}
 							>
 								<Plus className="h-4 w-4" />
-								<span>{isPending ? "Ajout..." : "Ajouter"}</span>
+								<span>
+									{isPending ? "Ajout..." : "Ajouter"}
+								</span>
 							</InputGroupButton>
 						</InputGroupAddon>
 					</InputGroup>
@@ -185,7 +198,8 @@ export default function TodoForm() {
 				{dueDate && (
 					<div className="px-2 flex items-center justify-between">
 						<span className="text-sm text-muted-foreground">
-							📅 Échéance : {format(dueDate, "PPPP", { locale: fr })}
+							📅 Échéance :{" "}
+							{format(dueDate, "PPPP", { locale: fr })}
 						</span>
 						<Button
 							type="button"
@@ -204,7 +218,15 @@ export default function TodoForm() {
 			{title.trim() && !isPending && (
 				<div className="px-2">
 					<p className="text-xs text-muted-foreground">
-						💡 <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Ctrl</kbd> + <kbd className="px-1 py-0.5 bg-muted rounded text-xs">Enter</kbd> pour ajouter rapidement
+						💡{" "}
+						<kbd className="px-1 py-0.5 bg-muted rounded text-xs">
+							Ctrl
+						</kbd>{" "}
+						+{" "}
+						<kbd className="px-1 py-0.5 bg-muted rounded text-xs">
+							Enter
+						</kbd>{" "}
+						pour ajouter rapidement
 					</p>
 				</div>
 			)}

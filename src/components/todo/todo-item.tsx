@@ -9,12 +9,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import {
-	deleteTask,
-	editTask,
-	restoreTask,
-	toggleTask,
-} from "@/actions/task";
+import { deleteTask, editTask, restoreTask, toggleTask } from "@/actions/task";
 import { toast } from "sonner";
 import { useState, useRef, useEffect } from "react";
 import {
@@ -143,7 +138,7 @@ export default function TodoItem({ task }: { task: Task }) {
 										description: task.completed
 											? "La tâche a été marquée comme non terminée."
 											: "La tâche a été marquée comme terminée.",
-									}
+									},
 								);
 							});
 						}}
@@ -189,7 +184,7 @@ export default function TodoItem({ task }: { task: Task }) {
 								"text-sm font-medium cursor-text px-1 py-0.5 rounded transition-colors flex-1 text-left",
 								task.completed
 									? "line-through transition-all duration-150"
-									: ""
+									: "",
 							)}
 							onClick={handleStartEdit}
 							onKeyDown={(e) => {
@@ -216,7 +211,7 @@ export default function TodoItem({ task }: { task: Task }) {
 							"flex items-center gap-1 transition-opacity",
 							isEditing
 								? "opacity-0 pointer-events-none"
-								: "group-hover:opacity-100 opacity-0"
+								: "group-hover:opacity-100 opacity-0",
 						)}
 					>
 						<EditTaskForm
@@ -266,11 +261,11 @@ export default function TodoItem({ task }: { task: Task }) {
 															label: "Annuler",
 															onClick: () => {
 																restoreTask(
-																	task.id
+																	task.id,
 																);
 															},
 														},
-													}
+													},
 												);
 											});
 										}}

@@ -40,7 +40,9 @@ export default function EditTaskForm({
 		formData.append("description", editedTask.description || "");
 		formData.append(
 			"dueDate",
-			editedTask.dueDate ? new Date(editedTask.dueDate).toISOString() : ""
+			editedTask.dueDate
+				? new Date(editedTask.dueDate).toISOString()
+				: "",
 		);
 
 		try {
@@ -53,7 +55,7 @@ export default function EditTaskForm({
 			toast.error(
 				error instanceof Error
 					? error.message
-					: "Une erreur est survenue"
+					: "Une erreur est survenue",
 			);
 		}
 	};
@@ -122,19 +124,19 @@ export default function EditTaskForm({
 										className={cn(
 											"w-full justify-start text-left font-normal",
 											!task.dueDate &&
-												"text-muted-foreground"
+												"text-muted-foreground",
 										)}
 									>
 										<CalendarIcon className="mr-2 h-4 w-4" />
 										{editedTask.dueDate
 											? format(
 													new Date(
-														editedTask.dueDate
+														editedTask.dueDate,
 													),
 													"PPPP",
 													{
 														locale: fr,
-													}
+													},
 												)
 											: "Choisir une date"}
 									</Button>
@@ -178,7 +180,7 @@ export default function EditTaskForm({
 												description: task.completed
 													? "La tâche a été marquée comme non terminée."
 													: "La tâche a été marquée comme terminée.",
-											}
+											},
 										);
 									});
 								}}

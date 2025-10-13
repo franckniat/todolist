@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,11 +8,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Field,
-	FieldDescription,
-	FieldGroup,
-} from "@/components/ui/field";
+import { Field, FieldDescription, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
@@ -64,21 +60,22 @@ export function LoginForm({
 							description: "Vous êtes maintenant connecté.",
 						});
 						toast.info("Redirection en cours ...");
-						const callbackUrl =
-							params.get("callbackUrl") || "/";
+						const callbackUrl = params.get("callbackUrl") || "/";
 						router.push(callbackUrl);
 					},
 					onError: (error) => {
 						if (error.error.code === "INVALID_EMAIL_OR_PASSWORD") {
 							toast.error("Email ou mot de passe invalide", {
-								description: "Veuillez vérifier vos informations et réessayer.",
+								description:
+									"Veuillez vérifier vos informations et réessayer.",
 							});
 							return;
 						}
 
 						if (error.error.code === "USER_NOT_FOUND") {
 							toast.error("Utilisateur non trouvé", {
-								description: "Aucun compte n'est associé à cet e-mail.",
+								description:
+									"Aucun compte n'est associé à cet e-mail.",
 							});
 							return;
 						}
@@ -90,7 +87,7 @@ export function LoginForm({
 							return;
 						}
 					},
-				}
+				},
 			);
 		});
 	};
@@ -142,7 +139,9 @@ export function LoginForm({
 										name="password"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Mot de passe</FormLabel>
+												<FormLabel>
+													Mot de passe
+												</FormLabel>
 												<FormControl>
 													<Input
 														{...field}
