@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import type { Task } from "@/types";
 import TodoItem from "./todo-item";
 import {
@@ -9,10 +10,10 @@ import {
 	PointerSensor,
 	useSensor,
 	useSensors,
-	//type DragEndEvent,
+	type DragEndEvent,
 } from "@dnd-kit/core";
 import {
-	//arrayMove,
+	arrayMove,
 	SortableContext,
 	sortableKeyboardCoordinates,
 	verticalListSortingStrategy,
@@ -25,8 +26,14 @@ import {
 } from "@/components/ui/accordion";
 
 export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
-	const activeTasks = tasks.filter((task) => !task.completed);
-	const completedTasks = tasks.filter((task) => task.completed);
+	const [localTasks, setLocalTasks] = React.useState<Task[]>(tasks);
+
+	React.useEffect(() => {
+		setLocalTasks(tasks);
+	}, [tasks]);
+
+	const activeTasks = localTasks.filter((task) => !task.completed);
+	const completedTasks = localTasks.filter((task) => task.completed);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -35,24 +42,47 @@ export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
 		}),
 	);
 
-	/* function handleDragEnd(event: DragEndEvent) {
+	async function handleDragEnd(event: DragEndEvent) {
 		const { active, over } = event;
 
-		if (over && active.id !== over.id) {
-			const oldIndex = tasks.findIndex((task) => task.id === active.id);
-			const newIndex = tasks.findIndex((task) => task.id === over.id);
+		if (!over || active.id === over.id) return;
 
-			const reorderedTasks = arrayMove(tasks, oldIndex, newIndex);
+		// We only reorder within the active tasks list
+		const activeIds = activeTasks.map((t) => t.id);
+		const oldIndex = activeIds.indexOf(active.id as string);
+		const newIndex = activeIds.indexOf(over.id as string);
+
+		if (oldIndex === -1 || newIndex === -1) return;
+
+		const reorderedActive = arrayMove(activeTasks, oldIndex, newIndex);
+
+		// Merge back with completed tasks (keep completed tasks after active ones)
+		const newLocal = [...reorderedActive, ...completedTasks];
+
+		// Optimistically update UI
+		setLocalTasks(newLocal);
+
+		// Persist order: send ordered ids for all tasks
+		try {
+			const orderedIds = newLocal.map((t) => t.id);
+			await fetch('/api/tasks/reorder', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ orderedIds }),
+			});
+		} catch (err) {
+			console.error('Failed to persist order', err);
+			// Option: refetch or revert UI on error. For now, leave optimistic state.
 		}
-	} */
+	}
 
 	return (
 		<div className="space-y-4">
-			<DndContext
-				sensors={sensors}
-				collisionDetection={closestCenter}
-				//onDragEnd={handleDragEnd}
-			>
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						onDragEnd={handleDragEnd}
+					>
 				{activeTasks.length > 0 && (
 					<SortableContext
 						items={activeTasks.map((task) => task.id)}
