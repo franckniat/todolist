@@ -1,103 +1,104 @@
+import {
+  Body,
+  Button,
+  Container,
+  Head,
+  Html,
+  Img,
+  Link,
+  Preview,
+  Section,
+  Text,
+} from '@react-email/components';
+
 interface ResetPasswordConfirmationProps {
 	name?: string | null;
 	email: string;
 	resetUrl: string;
 }
 
+const baseUrl = process.env.BETTER_AUTH_URL
+  ? `https://${process.env.BETTER_AUTH_URL}`
+  : '';
+
 export const ResetPasswordConfirmation: React.FC<
 	Readonly<ResetPasswordConfirmationProps>
 > = ({ name, email, resetUrl }) => {
 	return (
-		<div
-			style={{ fontFamily: "Inter, Arial, sans-serif", color: "#0f172a" }}
-		>
-			<table
-				width="100%"
-				cellPadding={0}
-				cellSpacing={0}
-				role="presentation"
-			>
-				<tbody>
-					<tr>
-						<td style={{ padding: "32px 0", textAlign: "center" }}>
-							<h1
-								style={{
-									fontSize: 24,
-									margin: "0 0 8px",
-									fontFamily: "var(--font-mono)",
-								}}
-							>
-								niato ai.
-							</h1>
-						</td>
-					</tr>
-					<tr>
-						<td style={{ padding: "0 24px" }}>
-							<h1 style={{ fontSize: 24, margin: "0 0 8px" }}>
-								Réinitialiser votre mot de passe
-							</h1>
-							<p style={{ margin: "0 0 16px", color: "#475569" }}>
-								Bonjour {name || "👋"}, nous avons reçu une
-								demande de réinitialisation de mot de passe pour
-								le compte associé à {email}.
-							</p>
-							<a
-								href={resetUrl}
-								style={{
-									display: "inline-block",
-									backgroundColor: "#0ea5e9",
-									color: "#fff",
-									padding: "10px 16px",
-									borderRadius: 8,
-									textDecoration: "none",
-									fontWeight: 600,
-								}}
-							>
-								Réinitialiser le mot de passe
-							</a>
-							<p
-								style={{
-									marginTop: 24,
-									fontSize: 12,
-									color: "#64748b",
-								}}
-							>
-								Si vous n&apos;êtes pas à l&apos;origine de
-								cette demande, vous pouvez ignorer cet email en
-								toute sécurité.
-							</p>
-							<p
-								style={{
-									marginTop: 12,
-									fontSize: 12,
-									color: "#64748b",
-								}}
-							>
-								Si le bouton ne fonctionne pas, copiez-collez ce
-								lien dans votre navigateur:
-								<br />
-								<span style={{ wordBreak: "break-all" }}>
-									{resetUrl}
-								</span>
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<td
-							style={{
-								padding: "24px",
-								color: "#94a3b8",
-								fontSize: 12,
-							}}
-						>
-							© {new Date().getFullYear()} Niato AI. Tous droits
-							réservés.
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<Html>
+      <Head />
+      <Body style={main}>
+        <Preview>Dropbox reset your password</Preview>
+        <Container style={container}>
+          <Img
+            src={`${baseUrl}/favicon.png`}
+            width="40"
+            height="33"
+            alt="todolist"
+          />
+          <Section>
+            <Text style={text}>Hi {name || email},</Text>
+            <Text style={text}>
+              Someone recently requested a password change for your Todolist app
+              account. If this was you, you can set a new password here:
+            </Text>
+            <Button style={button} href={resetUrl}>
+              Reset password
+            </Button>
+            <Text style={text}>
+              If you don&apos;t want to change your password or didn&apos;t
+              request this, just ignore and delete this message.
+            </Text>
+            <Text style={text}>
+              To keep your account secure, please don&apos;t forward this email
+              to anyone. See our Help Center for{' '}
+              <Link style={anchor} href={`https://${baseUrl}/help/security`}>
+                more security tips.
+              </Link>
+            </Text>
+            <Text style={text}>Happy Dropboxing!</Text>
+          </Section>
+        </Container>
+      </Body>
+    </Html>
 	);
 };
 
 export default ResetPasswordConfirmation;
+
+const main = {
+  backgroundColor: '#f6f9fc',
+  padding: '10px 0',
+};
+
+const container = {
+  backgroundColor: '#ffffff',
+  border: '1px solid #f0f0f0',
+  padding: '45px',
+};
+
+const text = {
+  fontSize: '16px',
+  fontFamily:
+    "'Open Sans', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif",
+  fontWeight: '300',
+  color: '#404040',
+  lineHeight: '26px',
+};
+
+const button = {
+  backgroundColor: '#007ee6',
+  borderRadius: '4px',
+  color: '#fff',
+  fontFamily: "'Open Sans', 'Helvetica Neue', Arial",
+  fontSize: '15px',
+  textDecoration: 'none',
+  textAlign: 'center' as const,
+  display: 'block',
+  width: '210px',
+  padding: '14px 7px',
+};
+
+const anchor = {
+  textDecoration: 'underline',
+};
