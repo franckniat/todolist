@@ -18,6 +18,7 @@ export const getTasks = async (userId?: string) => {
 				userId,
 				deleted: false,
 			},
+			orderBy: { position: 'asc' },
 		});
 
 		return tasks;
@@ -25,6 +26,25 @@ export const getTasks = async (userId?: string) => {
 		console.error("Erreur lors de la récupération des tâches:", error);
 		return [];
 	}
+};
+
+export const reorderTasks = async (userId: string, orderedIds: string[]) => {
+  if (!userId) return { success: false };
+
+  try {
+    // Mise à jour en transaction pour garantir la consistance
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.task.update({ where: { id }, data: { position: index } }),
+      ),
+    );
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors du réordonnancement des tâches:", error);
+    throw new Error("Une erreur est survenue lors du réordonnancement");
+  }
 };
 
 export const addTask = async (formData: FormData) => {

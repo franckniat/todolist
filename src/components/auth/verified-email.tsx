@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import type { Session } from "@/lib/auth";
 import { toast } from "sonner";
+import { Check } from "lucide-react";
 
 export default function VerificationForm() {
 	const params = useSearchParams();
@@ -31,12 +32,13 @@ export default function VerificationForm() {
 
 	return (
 		<div className="space-y-3">
+			<Check size={30}/>
 			<h1 className="text-2xl font-bold">Confirmation d'email</h1>
 			<p className="text-muted-foreground">
 				Votre email a été vérifié avec succès !
 			</p>
-			<Link href="/" className={buttonVariants({ variant: "default" })}>
-				Aller à l'accueil
+			<Link href="/login" className={buttonVariants({ variant: "default" })}>
+				Se connecter
 			</Link>
 		</div>
 	);

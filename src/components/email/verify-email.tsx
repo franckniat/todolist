@@ -1,8 +1,25 @@
+import {
+	Body,
+	Button,
+	Container,
+	Head,
+	Html,
+	Img,
+	Link,
+	Preview,
+	Section,
+	Text,
+} from '@react-email/components';
+
 interface VerifyEmailProps {
 	name?: string | null;
 	email: string;
 	verifyUrl: string;
 }
+
+const baseUrl = process.env.BETTER_AUTH_URL
+	? `https://${process.env.BETTER_AUTH_URL}`
+	: '';
 
 export const VerifyEmail: React.FC<Readonly<VerifyEmailProps>> = ({
 	name,
@@ -10,87 +27,80 @@ export const VerifyEmail: React.FC<Readonly<VerifyEmailProps>> = ({
 	verifyUrl,
 }) => {
 	return (
-		<div
-			style={{ fontFamily: "Inter, Arial, sans-serif", color: "#0f172a" }}
-		>
-			<table
-				width="100%"
-				cellPadding={0}
-				cellSpacing={0}
-				role="presentation"
-			>
-				<tbody>
-					<tr>
-						<td style={{ padding: "32px 0", textAlign: "center" }}>
-							<h1
-								style={{
-									fontSize: 24,
-									margin: "0 0 8px",
-									fontFamily: "var(--font-mono)",
-								}}
-							>
-								niato ai.
-							</h1>
-						</td>
-					</tr>
-					<tr>
-						<td style={{ padding: "0 24px" }}>
-							<h1 style={{ fontSize: 24, margin: "0 0 8px" }}>
-								Vérifiez votre email
-							</h1>
-							<p style={{ margin: "0 0 16px", color: "#475569" }}>
-								Bonjour {name || "👋"}, confirmez votre adresse
-								email pour activer votre compte Niato AI.
-							</p>
-							<p style={{ margin: "0 0 24px", color: "#475569" }}>
-								Adresse: {email}
-							</p>
-							<a
-								href={verifyUrl}
-								style={{
-									display: "inline-block",
-									backgroundColor: "#0ea5e9",
-									color: "#fff",
-									padding: "10px 16px",
-									borderRadius: 8,
-									textDecoration: "none",
-									fontWeight: 600,
-								}}
-							>
-								Vérifier mon email
-							</a>
-							<p
-								style={{
-									marginTop: 24,
-									fontSize: 12,
-									color: "#64748b",
-								}}
-							>
-								Si le bouton ne fonctionne pas, copiez-collez ce
-								lien dans votre navigateur:
-								<br />
-								<span style={{ wordBreak: "break-all" }}>
-									{verifyUrl}
-								</span>
-							</p>
-						</td>
-					</tr>
-					<tr>
-						<td
-							style={{
-								padding: "24px",
-								color: "#94a3b8",
-								fontSize: 12,
-							}}
-						>
-							© {new Date().getFullYear()} Niato AI. Tous droits
-							réservés.
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		<Html>
+			<Head />
+			<Body style={main}>
+				<Preview>Confirm your email for Todolist</Preview>
+				<Container style={container}>
+					<Img
+						src={`${baseUrl}/favicon.png`}
+						width="40"
+						height="33"
+						alt="todolist"
+					/>
+					<Section>
+						<Text style={text}>Hi {name || email},</Text>
+						<Text style={text}>
+							Welcome! Please confirm your email address to activate your
+							Todolist account.
+						</Text>
+						<Button style={button} href={verifyUrl}>
+							Verify email
+						</Button>
+						<Text style={text}>
+							If you didn&apos;t create an account with this email, you can
+							safely ignore this message.
+						</Text>
+						<Text style={text}>
+							For your security, don&apos;t forward this email to anyone. See
+							our Help Center for{' '}
+							<Link style={anchor} href={`https://${baseUrl}/help/security`}>
+								more security tips.
+							</Link>
+						</Text>
+						<Text style={text}>Happy Todolisting!</Text>
+					</Section>
+				</Container>
+			</Body>
+		</Html>
 	);
 };
 
 export default VerifyEmail;
+
+const main = {
+	backgroundColor: '#f6f9fc',
+	padding: '10px 0',
+};
+
+const container = {
+	backgroundColor: '#ffffff',
+	border: '1px solid #f0f0f0',
+	padding: '45px',
+};
+
+const text = {
+	fontSize: '16px',
+	fontFamily:
+		"'Open Sans', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif",
+	fontWeight: '300',
+	color: '#404040',
+	lineHeight: '26px',
+};
+
+const button = {
+	backgroundColor: '#007ee6',
+	borderRadius: '4px',
+	color: '#fff',
+	fontFamily: "'Open Sans', 'Helvetica Neue', Arial",
+	fontSize: '15px',
+	textDecoration: 'none',
+	textAlign: 'center' as const,
+	display: 'block',
+	width: '210px',
+	padding: '14px 7px',
+};
+
+const anchor = {
+	textDecoration: 'underline',
+};
