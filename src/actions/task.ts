@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Priority } from "@/generated/client";
+import type { Priority } from "@/lib/generated/prisma/client";
 
 export const getTasks = async (userId?: string) => {
 	if (!userId) {
@@ -18,7 +18,7 @@ export const getTasks = async (userId?: string) => {
 				userId,
 				deleted: false,
 			},
-			orderBy: { position: 'asc' },
+			orderBy: { position: "asc" },
 		});
 
 		return tasks;
@@ -29,22 +29,25 @@ export const getTasks = async (userId?: string) => {
 };
 
 export const reorderTasks = async (userId: string, orderedIds: string[]) => {
-  if (!userId) return { success: false };
+	if (!userId) return { success: false };
 
-  try {
-    // Mise à jour en transaction pour garantir la consistance
-    await prisma.$transaction(
-      orderedIds.map((id, index) =>
-        prisma.task.update({ where: { id }, data: { position: index } }),
-      ),
-    );
+	try {
+		// Mise à jour en transaction pour garantir la consistance
+		await prisma.$transaction(
+			orderedIds.map((id, index) =>
+				prisma.task.update({
+					where: { id },
+					data: { position: index },
+				}),
+			),
+		);
 
-    revalidatePath("/");
-    return { success: true };
-  } catch (error) {
-    console.error("Erreur lors du réordonnancement des tâches:", error);
-    throw new Error("Une erreur est survenue lors du réordonnancement");
-  }
+		revalidatePath("/");
+		return { success: true };
+	} catch (error) {
+		console.error("Erreur lors du réordonnancement des tâches:", error);
+		throw new Error("Une erreur est survenue lors du réordonnancement");
+	}
 };
 
 export const addTask = async (formData: FormData) => {

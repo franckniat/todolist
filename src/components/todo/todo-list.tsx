@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import type { Task } from "@/types";
 import TodoItem from "./todo-item";
 import {
@@ -65,24 +65,24 @@ export default function TodoList({ tasks = [] }: { tasks: Task[] }) {
 		// Persist order: send ordered ids for all tasks
 		try {
 			const orderedIds = newLocal.map((t) => t.id);
-			await fetch('/api/tasks/reorder', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+			await fetch("/api/tasks/reorder", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ orderedIds }),
 			});
 		} catch (err) {
-			console.error('Failed to persist order', err);
+			console.error("Failed to persist order", err);
 			// Option: refetch or revert UI on error. For now, leave optimistic state.
 		}
 	}
 
 	return (
 		<div className="space-y-4">
-					<DndContext
-						sensors={sensors}
-						collisionDetection={closestCenter}
-						onDragEnd={handleDragEnd}
-					>
+			<DndContext
+				sensors={sensors}
+				collisionDetection={closestCenter}
+				onDragEnd={handleDragEnd}
+			>
 				{activeTasks.length > 0 && (
 					<SortableContext
 						items={activeTasks.map((task) => task.id)}
