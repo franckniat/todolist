@@ -23,6 +23,14 @@ import { addTask } from "@/actions/task";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import type { Tag } from "@/lib/generated/prisma/client";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 
 export default function TodoForm() {
 	const { data: session } = useSession();
@@ -31,6 +39,7 @@ export default function TodoForm() {
 	const [dueDate, setDueDate] = useState<Date>();
 	const [showDescription, setShowDescription] = useState(false);
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+	const [tags, setTags] = useState<Tag[]>([]);
 	const [isPending, startTransition] = useTransition();
 	const router = useRouter();
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -106,6 +115,20 @@ export default function TodoForm() {
 							required
 							maxLength={255}
 						/>
+						<InputGroupAddon align={"inline-end"}>
+							{title.trim() && (
+								<Select>
+									<SelectTrigger className="w-fit" size="xs">
+										<SelectValue placeholder="Tags" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="light">
+											Light
+										</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						</InputGroupAddon>
 						<InputGroupAddon align="inline-end">
 							{title.trim() && (
 								<>

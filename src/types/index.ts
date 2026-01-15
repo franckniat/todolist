@@ -1,1 +1,1 @@
-export type { Task } from "@/generated/client";
+export type { Task } from "@/lib/generated/prisma/client";

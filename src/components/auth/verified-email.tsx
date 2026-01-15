@@ -32,12 +32,15 @@ export default function VerificationForm() {
 
 	return (
 		<div className="space-y-3">
-			<Check size={30}/>
+			<Check size={30} />
 			<h1 className="text-2xl font-bold">Confirmation d'email</h1>
 			<p className="text-muted-foreground">
 				Votre email a été vérifié avec succès !
 			</p>
-			<Link href="/login" className={buttonVariants({ variant: "default" })}>
+			<Link
+				href="/login"
+				className={buttonVariants({ variant: "default" })}
+			>
 				Se connecter
 			</Link>
 		</div>
